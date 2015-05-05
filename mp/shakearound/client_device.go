@@ -38,7 +38,7 @@ func (clt *Client) DeviceApplyId(quantity int64, applyReason, comment string, po
 		Quantity    int64  `json:"quantity"`
 		ApplyReason string `json:"apply_reason"`
 		Comment     string `json:"comment"`
-		PoiId       string `json:"poi_id"`
+		PoiId       int64  `json:"poi_id"`
 	}{
 		Quantity:    quantity,
 		ApplyReason: applyReason,
@@ -61,7 +61,7 @@ func (clt *Client) DeviceApplyId(quantity int64, applyReason, comment string, po
 	}
 
 	if result.ErrCode != mp.ErrCodeOK {
-		err = &result
+		err = &result.Error
 		return
 	}
 	applyId = result.Data.ApplyId
@@ -93,7 +93,7 @@ func (clt *Client) DeviceUpdate(device ShakeDeviceIdentifier, comment string) (e
 	}
 
 	if result.ErrCode != mp.ErrCodeOK {
-		err = &result
+		err = &result.Error
 		return
 	}
 
@@ -101,7 +101,7 @@ func (clt *Client) DeviceUpdate(device ShakeDeviceIdentifier, comment string) (e
 }
 
 // 新增页面
-func (clt *Client) DeviceUpdate(device ShakeDeviceIdentifier, poiId int64) (err error) {
+func (clt *Client) DeviceBindLocation(device ShakeDeviceIdentifier, poiId int64) (err error) {
 	var request = struct {
 		DeviceIdentifier ShakeDeviceIdentifier `json:"device_identifier"`
 		PoiId            int64                 `json:"poi_id"`
@@ -121,7 +121,7 @@ func (clt *Client) DeviceUpdate(device ShakeDeviceIdentifier, poiId int64) (err 
 	}
 
 	if result.ErrCode != mp.ErrCodeOK {
-		err = &result
+		err = &result.Error
 		return
 	}
 
@@ -155,7 +155,7 @@ func (clt *Client) DeviceSearch(device ShakeDeviceIdentifier, applyId, begin, en
 	}
 
 	if result.ErrCode != mp.ErrCodeOK {
-		err = &result
+		err = &result.Error
 		return
 	}
 	devices = result.Data.Devices
@@ -165,7 +165,7 @@ func (clt *Client) DeviceSearch(device ShakeDeviceIdentifier, applyId, begin, en
 }
 
 // 新增页面
-func (clt *Client) DeviceBindPage(device ShakeDeviceIdentifier, pageIds []int64, bind, append int64) (err error) {
+func (clt *Client) DeviceBindPage(device ShakeDeviceIdentifier, pageIds []int64, bind, append_ int64) (err error) {
 	var request = struct {
 		DeviceIdentifier ShakeDeviceIdentifier `json:"device_identifier"`
 		PageIds          []int64               `json:"page_ids"`
@@ -173,9 +173,9 @@ func (clt *Client) DeviceBindPage(device ShakeDeviceIdentifier, pageIds []int64,
 		Append           int64                 `json:"append"`
 	}{
 		DeviceIdentifier: device,
-		ApplyId:          applyId,
-		Begin:            begin,
-		End:              end,
+		PageIds:          pageIds,
+		Bind:             bind,
+		Append:           append_,
 	}
 	var result struct {
 		mp.Error
@@ -189,11 +189,9 @@ func (clt *Client) DeviceBindPage(device ShakeDeviceIdentifier, pageIds []int64,
 	}
 
 	if result.ErrCode != mp.ErrCodeOK {
-		err = &result
+		err = &result.Error
 		return
 	}
-	devices = result.Data.Devices
-	totalCount = result.Data.TotalCount
 
 	return
 }

@@ -8,13 +8,6 @@ import (
 	"github.com/chanxuehong/wechat/mp"
 )
 
-type ShakeBeaconInfo struct {
-	Distince float64 `json:"distince"` // Beacon信号与手机的距离，单位为米
-	Major    int64   `json:"major"`
-	Minor    int64   `json:"minor"`
-	UUID     string  `json:"uuid"`
-}
-
 // 新增页面
 func (clt *Client) UserGetShakeInfo(ticket string, needPoi int) (pageId int64, beaconInfo ShakeBeaconInfo, err error) {
 	var request = struct {
@@ -40,7 +33,7 @@ func (clt *Client) UserGetShakeInfo(ticket string, needPoi int) (pageId int64, b
 	}
 
 	if result.ErrCode != mp.ErrCodeOK {
-		err = &result
+		err = &result.Error
 		return
 	}
 	pageId = result.Data.PageId

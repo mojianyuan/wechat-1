@@ -8,25 +8,24 @@ import (
 	"errors"
 	"github.com/chanxuehong/wechat/mp"
 	"io"
-	"net/url"
 	"os"
 	"path/filepath"
 )
 
 // 上传体图片
 func (clt *Client) UploadMaterial(filepath string) (picUrl string, err error) {
-	return clt.uploadMedia(MediaTypeImage, filepath)
+	return clt.uploadMedia(filepath)
 }
 
 // 上传多媒体
-func (clt *Client) uploadMedia(mediaType, _filepath string) (picUrl string, err error) {
+func (clt *Client) uploadMedia(_filepath string) (picUrl string, err error) {
 	file, err := os.Open(_filepath)
 	if err != nil {
 		return
 	}
 	defer file.Close()
 
-	return clt.uploadMediaFromReader(mediaType, filepath.Base(_filepath), file)
+	return clt.uploadMediaFromReader(filepath.Base(_filepath), file)
 }
 
 // 上传多媒体图片
@@ -40,10 +39,10 @@ func (clt *Client) UploadMaterialFromReader(filename string, reader io.Reader) (
 		err = errors.New("nil reader")
 		return
 	}
-	return clt.uploadMediaFromReader(MediaTypeImage, filename, reader)
+	return clt.uploadMediaFromReader(filename, reader)
 }
 
-func (clt *Client) uploadMediaFromReader(mediaType, filename string, reader io.Reader) (picUrl string, err error) {
+func (clt *Client) uploadMediaFromReader(filename string, reader io.Reader) (picUrl string, err error) {
 	var result struct {
 		mp.Error
 		Data struct {
@@ -60,6 +59,6 @@ func (clt *Client) uploadMediaFromReader(mediaType, filename string, reader io.R
 		err = &result.Error
 		return
 	}
-	info = result.Data.PicUrl
+	picUrl = result.Data.PicUrl
 	return
 }

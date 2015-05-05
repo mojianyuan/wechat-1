@@ -44,7 +44,7 @@ func (clt *Client) StatisticsDevice(device ShakeDeviceIdentifier, beginDate, end
 	}
 
 	if result.ErrCode != mp.ErrCodeOK {
-		err = &result
+		err = &result.Error
 		return
 	}
 	data = result.Data
@@ -73,7 +73,7 @@ func (clt *Client) StatisticsPage(pageId, beginDate, endDate int64) (data []Shak
 	}
 
 	if result.ErrCode != mp.ErrCodeOK {
-		err = &result
+		err = &result.Error
 		return
 	}
 	data = result.Data

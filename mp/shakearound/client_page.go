@@ -31,7 +31,7 @@ func (clt *Client) PageAdd(page ShakearoundPage) (pageId string, err error) {
 	}
 
 	if result.ErrCode != mp.ErrCodeOK {
-		err = &result
+		err = &result.Error
 		return
 	}
 	pageId = result.Data.PageId
@@ -53,7 +53,7 @@ func (clt *Client) PageUpdate(page ShakearoundPage) (pageId string, err error) {
 	}
 
 	if result.ErrCode != mp.ErrCodeOK {
-		err = &result
+		err = &result.Error
 		return
 	}
 	pageId = result.Data.PageId
@@ -61,7 +61,7 @@ func (clt *Client) PageUpdate(page ShakearoundPage) (pageId string, err error) {
 }
 
 // 查询页面
-func (clt *Client) PageSearch(pageIds []int64, begin, count int64) (totalCount int64, pages []ShakearoundPage, err error) {
+func (clt *Client) PageSearch(pageIds []int64, begin, end int64) (totalCount int64, pages []ShakearoundPage, err error) {
 	var request = struct {
 		PageIds []int64 `json:"page_ids,omtiempty"`
 		Begin   int64   `json:"begin,omtiempty"`
@@ -85,7 +85,7 @@ func (clt *Client) PageSearch(pageIds []int64, begin, count int64) (totalCount i
 	}
 
 	if result.ErrCode != mp.ErrCodeOK {
-		err = &result
+		err = &result.Error
 		return
 	}
 	totalCount = result.Data.TotalCount
@@ -112,7 +112,7 @@ func (clt *Client) PageDelete(pageIds []int64) (err error) {
 	}
 
 	if result.ErrCode != mp.ErrCodeOK {
-		err = &result
+		err = &result.Error
 		return
 	}
 	return
